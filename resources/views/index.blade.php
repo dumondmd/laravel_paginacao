@@ -6,11 +6,52 @@
         <meta name="csrf-token" content="{{csrf_token()}}">
         <title>Paginação</title>
         <!-- Styles -->        
-         <link rel="stylesheet" type="text/css" href="{{asset('site/style.css')}}">        
+         <link rel="stylesheet" type="text/css" href="{{asset('site/style.css')}}">         
+         <style type="text/css">
+             body {
+                padding: 20px;
+             }
+         </style>        
     </head>
     <body>
         <div class="container">
-            
+            <div class="card text-center">
+                <div class="card-header">
+                    Tabela de Clientes
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Exibindo 10 clientes de 1000 (1 a 10)</h5>
+                    <table class="table table-hover">
+                        <thead>
+                            <th scope="col">#</th>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Sobrenome</th>
+                            <th scope="col">E-mail</th>                            
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>César</td>
+                                <td>Augusto</td>
+                                <td>cesar@augusto.com</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>César</td>
+                                <td>Augusto</td>
+                                <td>cesar@augusto.com</td>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td>César</td>
+                                <td>Augusto</td>
+                                <td>cesar@augusto.com</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">Páginas</div>
+            </div>
         </div>
         <script src="{{asset('site/jquery.js')}}" type="text/javascript"></script>
         <script src="{{asset('site/bootstrap.js')}}" type="text/javascript"></script>
