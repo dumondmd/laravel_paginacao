@@ -20,10 +20,10 @@
                     Tabela de Clientes
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Exibindo 10 clientes de 1000 (1 a 10)</h5>
+                    <h5 class="card-title">Exibindo {{$clientes->count()}} clientes de {{$clientes->total()}} ({{$clientes->firstItem()}} a {{$clientes->lastItem()}})</h5>
                     <table class="table table-hover">
                         <thead>
-                            <th scope="col">#</th>
+                            <th scope="col">ID</th>
                             <th scope="col">Nome</th>
                             <th scope="col">Sobrenome</th>
                             <th scope="col">E-mail</th>                            
