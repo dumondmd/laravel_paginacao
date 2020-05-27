@@ -33,3 +33,14 @@ Coloca no final do **body**
 <script src="{{asset('site/jquery.js')}}" type="text/javascript"></script>
 <script src="{{asset('site/bootstrap.js')}}" type="text/javascript"></script>
 ```
+
+## Criando e execuando um SEEDER
+
+*php artisan make:seeder ClientesSeeder*
+
+
+Adicione depois no arquivo **DatabaseSeeder**
+```
+$this->call(ClientesSeeder::class);
+```
+*php artisan db:seed*
