@@ -40,7 +40,9 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card-footer">Páginas</div>
+                <div class="card-footer">
+                    {{$clientes->links()}}
+                </div>
             </div>
         </div>
         <script src="{{asset('site/jquery.js')}}" type="text/javascript"></script>
