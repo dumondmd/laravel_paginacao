@@ -69,23 +69,44 @@
         <script src="{{asset('site/bootstrap.js')}}" type="text/javascript"></script>
         <script type="text/javascript">
             
-            function getItem(data, i) {
-                if (i == data.current_page)
-                    s = '<li class="page-item active">';
+            function getItemProximo(data) {
+                if (data.last_page == data.current_page)
+                    s = '<li class="page-item disabled">';
                 else
-                    s = '<li class="page-item">';    
-                
-                s += '<a class="page-link" href="#">' +i+ '</a></li>';
+                    s = '<li class="page-item">';
+                s += '<a class="page-link" href="#">Próximo</a></li>';
                 return s;
             }
 
+            function getItemAnterior(data) {
+                i = data.current_page-1;
+                if (data.current_page == 1) 
+                    s = '<li class="page-item disabled">';
+                else
+                    s = '<li class="page-item">';
+                s += '<a class="page-link" ' + 'pagina="'+i+'" ' + ' href="javascript:void(0);">Anterior</a></li>';
+                return s;
+            }
 
+            function getItem(data, i) {
+                if (data.current_page == i) 
+                    s = '<li class="page-item active">';
+                else
+                    s = '<li class="page-item">';
+                s += '<a class="page-link" ' + 'pagina="'+i+'" ' + ' href="javascript:void(0);">' + i + '</a></li>';
+                return s;
+            }
 
             function montarPaginator(data) {
-                for(i=1; i<data.total; i++) {
+                $("#paginator>ul>li").remove();
+                $("#paginator>ul").append(getItemAnterior(data));
+                inicio = 1;
+                fim = 10;
+                for(i=1; i<fim; i++) {
                     s = getItem(data, i);
                     $("#paginator>ul").append(s);
                 }
+                $("#paginator>ul").append(getItemProximo(data));
             }
 
             function montarLinha(cliente) {
@@ -115,7 +136,7 @@
             }
 
             $(function(){
-                carregarClientes(1);
+                carregarClientes(8);
             });
            
         </script>
