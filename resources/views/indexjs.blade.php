@@ -20,7 +20,7 @@
                     Tabela de Clientes
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Exibindo clientes</h5>
+                    <h5 id="cardtitle" class="card-title">Exibindo clientes</h5>
                     <table id="tabelaClientes" class="table table-hover">
                         <thead>
                             <th scope="col">ID</th>
@@ -41,7 +41,7 @@
                     </table>
                 </div>
                 <div class="card-footer">
-                    <nav id="paginator">
+                    <nav id="paginationNav">
                         <ul class="pagination">
                         <!--
                             <li class="page-item disabled"> 
@@ -69,75 +69,106 @@
         <script src="{{asset('site/bootstrap.js')}}" type="text/javascript"></script>
         <script type="text/javascript">
             
-            function getItemProximo(data) {
-                if (data.last_page == data.current_page)
-                    s = '<li class="page-item disabled">';
-                else
-                    s = '<li class="page-item">';
-                s += '<a class="page-link" href="#">Próximo</a></li>';
-                return s;
-            }
+    function getNextItem(data) {
+        i = data.current_page+1;
+        if (data.current_page == data.last_page) 
+            s = '<li class="page-item disabled">';
+        else
+            s = '<li class="page-item">';
+        s += '<a class="page-link" ' + 'pagina="'+i+'" ' + ' href="javascript:void(0);">Próximo</a></li>';
+        return s;
+    }
+    
+    function getPreviousItem(data) {
+        i = data.current_page-1;
+        if (data.current_page == 1) 
+            s = '<li class="page-item disabled">';
+        else
+            s = '<li class="page-item">';
+        s += '<a class="page-link" ' + 'pagina="'+i+'" ' + ' href="javascript:void(0);">Anterior</a></li>';
+        return s;
+    }
+    
+    function getItem(data, i) {
+        if (data.current_page == i) 
+            s = '<li class="page-item active">';
+        else
+            s = '<li class="page-item">';
+        s += '<a class="page-link" ' + 'pagina="'+i+'" ' + ' href="javascript:void(0);">' + i + '</a></li>';
+        return s;
+    }
 
-            function getItemAnterior(data) {
-                i = data.current_page-1;
-                if (data.current_page == 1) 
-                    s = '<li class="page-item disabled">';
-                else
-                    s = '<li class="page-item">';
-                s += '<a class="page-link" ' + 'pagina="'+i+'" ' + ' href="javascript:void(0);">Anterior</a></li>';
-                return s;
-            }
+    function montarPaginator(data) {
+        
+        $("#paginationNav>ul>li").remove();
 
-            function getItem(data, i) {
-                if (data.current_page == i) 
-                    s = '<li class="page-item active">';
-                else
-                    s = '<li class="page-item">';
-                s += '<a class="page-link" ' + 'pagina="'+i+'" ' + ' href="javascript:void(0);">' + i + '</a></li>';
-                return s;
-            }
+        $("#paginationNav>ul").append(
+            getPreviousItem(data)
+        );
+        // for (i=1;i<=data.last_page;i++) {
+        //     $("#paginationNav>ul").append(
+        //         getItem(data,i)
+        //     );
+        // }
+        
+        n = 10;
+        
+        if (data.current_page - n/2 <= 1)
+            inicio = 1;
+        else if (data.last_page - data.current_page < n)
+            inicio = data.last_page - n + 1;
+        else 
+            inicio = data.current_page - n/2;
+        
+        fim = inicio + n-1;
 
-            function montarPaginator(data) {
-                $("#paginator>ul>li").remove();
-                $("#paginator>ul").append(getItemAnterior(data));
-                inicio = 1;
-                fim = 10;
-                for(i=1; i<fim; i++) {
-                    s = getItem(data, i);
-                    $("#paginator>ul").append(s);
-                }
-                $("#paginator>ul").append(getItemProximo(data));
-            }
+        for (i=inicio;i<=fim;i++) {
+            $("#paginationNav>ul").append(
+                getItem(data,i)
+            );
+        }
+        $("#paginationNav>ul").append(
+            getNextItem(data)
+        );
+    }
+    
+    function montarLinha(cliente) {
+        return '<tr>' +
+            '  <th scope="row">' + cliente.id + '</th>' +
+            '  <td>' + cliente.nome + '</td>' +
+            '  <td>' + cliente.sobrenome + '</td>' +
+            '  <td>' + cliente.email + '</td>' +
+            '</tr>';
+    }
 
-            function montarLinha(cliente) {
-                return '<tr>' +
-                        '  <th scope="row">' + cliente.id + '</th>' +
-                        '  <td>' + cliente.nome + '</td>' +
-                        '  <td>' + cliente.sobrenome + '</td>' +
-                        '  <td>' + cliente.email + '</td>' +
-                        '</tr>';
-            }
+    function montarTabela(data) {
+        $("#tabelaClientes>tbody>tr").remove();
+        for(i=0;i<data.data.length;i++) {
+            $("#tabelaClientes>tbody").append(
+                montarLinha(data.data[i])
+            );
+        }
+    }
 
-            function montarTabela(data) {
-                $("#tabelaClientes>tbody>tr").remove();
-                for(i=0; i<data.data.length; i++) {
-                    s = montarLinha(data.data[i]);
-                    //console.log(s);
-                    $("#tabelaClientes>tbody").append(s);
-                }
-            }
+    function carregarClientes(pagina) {
+        $.get('/json',{page: pagina}, function(resp) {
+            console.log(resp);
+            console.log(resp.data.length);
+            montarTabela(resp);
+            montarPaginator(resp);
+            $("#paginationNav>ul>li>a").click(function(){
+                // console.log($(this).attr('pagina') );
+                carregarClientes($(this).attr('pagina'));
+            })
+            $("#cardtitle").html( "Exibindo " + resp.per_page + 
+                " clientes de " + resp.total + 
+                " (" + resp.from + " a " + resp.to +  ")" );
+        }); 
+    }
 
-            function carregarClientes(pagina) {
-                $.get('/json', {page: pagina}, function(resp) {
-                    //console.log(resp);
-                    montarTabela(resp);
-                    montarPaginator(resp);
-                });
-            }
-
-            $(function(){
-                carregarClientes(8);
-            });
+    $(function(){
+        carregarClientes(1);
+    });
            
         </script>
     </body>
